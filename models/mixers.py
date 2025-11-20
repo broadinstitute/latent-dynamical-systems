@@ -21,16 +21,22 @@ class NMFMixer(nn.Module):
 
 
 class MLPMixer(nn.Module):
-    def __init__(self, latent_dim, out_dim,reg_weight = 1e-5,hidden_dim = 200, nonlinearity = 'softplus',bias = True, **kwargs) -> None:
+    def __init__(self, latent_dim, out_dim,reg_weight = 1e-5,hidden_dim = 200, nonlinearity = 'softplus',bias = True, dropout_prob = 0.0, **kwargs) -> None:
         super().__init__()
         self.latent_dim = latent_dim
-        nl = nn.Softplus()
-        if nonlinearity=='relu':
+        if nonlinearity=='softplus':
+            nl = nn.Softplus()
+        elif nonlinearity=='relu':
             nl = nn.ReLU()
+        elif nonlinearity=='celu':
+            nl = nn.CELU()
+
+        dropout = nn.Dropout(dropout_prob) 
+
         if bias==False:
-            self.decoder = nn.Sequential(nn.Linear(latent_dim,hidden_dim,bias = None), nl, nn.Linear(hidden_dim,hidden_dim,bias = None),nl,nn.Linear(hidden_dim,out_dim,bias = None),nn.Softplus())
+            self.decoder = nn.Sequential(nn.Linear(latent_dim,hidden_dim,bias = None), nl, dropout, nn.Linear(hidden_dim,hidden_dim,bias = None),nl, dropout, nn.Linear(hidden_dim,out_dim,bias = None),nn.Softplus())
         else:
-            self.decoder = nn.Sequential(nn.Linear(latent_dim,hidden_dim), nl, nn.Linear(hidden_dim,hidden_dim), nl,nn.Linear(hidden_dim,out_dim),nl) #note the terminal nonlinearity
+            self.decoder = nn.Sequential(nn.Linear(latent_dim,hidden_dim), nl, dropout, nn.Linear(hidden_dim,hidden_dim), nl, dropout, nn.Linear(hidden_dim,out_dim),nl) #note the terminal nonlinearity
 
     def build_params(self):
         pass
@@ -233,6 +239,54 @@ class OldSeqAttentionMLPMixer(nn.Module):
 
     def reg(self):
         return 0
+
+class NMFDecomposedMixer(nn.Module): ## assumes that genes are ordered as [tfs, targets]
+    def __init__(self, latent_dim, hidden_dim, target_dim,reg1_weight = 1e-3,reg2_weight = 1e-2,reg3_weight = 1e-5, **kwargs) -> None:
+        super().__init__()
+        self.latent_dim = latent_dim
+        self.hidden_dim = hidden_dim
+        self.ldecode1 = nn.Parameter(torch.randn(latent_dim, hidden_dim), requires_grad=True)
+        self.ldecode2 = nn.Parameter(torch.randn(hidden_dim, target_dim), requires_grad=True)
+        self.ldecode3 = nn.Parameter(torch.randn(latent_dim, hidden_dim), requires_grad=True)
+        self.reg1_weight = reg1_weight
+        self.reg2_weight = reg2_weight
+        self.reg3_weight = reg3_weight
+
+    def get_decode1(self):
+        assert self.decode1 is not None
+        return self.decode1
+    
+    def get_decode2(self):
+        assert self.decode2 is not None
+        return self.decode2
+    
+    def get_decode3(self):
+        assert self.decode3 is not None
+        return self.decode3
+
+    def build_params(self):
+        self.decode1 = 0.1* torch.square(self.ldecode1)
+        self.decode2 = 0.1* torch.square(self.ldecode2)
+        self.decode3 = 0.1* torch.square(self.ldecode3)
+
+        ## initialize decode2 with prior
+        tf_target_prior = torch.from_numpy(pd.read_csv('/home/skambha6/chenlab/stnca/stnca_data/zebrafish/zebrafish_cisTarget/tf_target_spatial_df.csv', index_col=0).to_numpy()).float().cuda()
+        
+        self.decode2[tf_target_prior != 0] = 1
+
+    def decoder(self,x):
+        out_target = (x@self.decode1)@self.decode2
+        out_tf = x@self.decode3
+        return torch.cat([out_tf, out_target],dim = 1)
+
+    def reg(self):
+        d1 = self.decode1/torch.norm(self.decode1, dim= 1, keepdim = True)
+        d2 = self.decode2/torch.norm(self.decode2, dim= 1, keepdim = True)
+        d3 = self.decode3/torch.norm(self.decode3, dim= 1, keepdim = True)
+        reg = self.reg1_weight*torch.abs((1-torch.eye(self.latent_dim,device = 'cuda'))* (d1@d1.T)).mean() + \
+                    self.reg2_weight*torch.abs((1-torch.eye(self.hidden_dim,device = 'cuda'))* (d2@d2.T)).mean() + \
+                        self.reg3_weight*torch.abs((1-torch.eye(self.latent_dim,device = 'cuda'))* (d3@d3.T)).mean()
+        return reg
     
 
 class BPNet(torch.nn.Module):
