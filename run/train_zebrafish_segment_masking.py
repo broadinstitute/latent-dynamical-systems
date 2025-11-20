@@ -112,8 +112,8 @@ if FIT_GEX0 == False:
 
 SCALE = args.scale
 
-## Load Data
-x = load_data('/home/skambha6/chenlab/lads/data/zebrafish/spatial_fivetime_slice_stereoseq.h5ad')
+## Load Data (change path to where you have downloaded the data)
+x = load_data('zebrafish_spatial_fivetime_slice_stereoseq.h5ad') 
 
 print("args:")
 print(args) 

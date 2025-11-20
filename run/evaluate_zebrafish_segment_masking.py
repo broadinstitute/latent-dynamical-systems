@@ -119,13 +119,13 @@ SCALE = args.scale
 size, yshifts, xshifts = set_scale(SCALE)
 
 
-RESULTS_DIR = "/home/skambha6/chenlab/lads/code/run/zebrafish_evaluation"
+RESULTS_DIR = os.getcwd()
 
 checkpoint_iteration = int(args.ckpt_iter) - 1 ## -1 to correct for 0 indexing 
 
 
-## Load Data
-x = load_data('/home/skambha6/chenlab/lads/data/zebrafish/spatial_fivetime_slice_stereoseq.h5ad')
+## Load Data (change path to where you have downloaded the data)
+x = load_data('zebrafish_spatial_fivetime_slice_stereoseq.h5ad')
 inverse_mask_segments_mode = args.inverse_mask_mode
 mask_segments_tp = args.mask_tp
 tp, tp_masked,gex = preprocess_data(x, args, filter=FILTER, preprocess_gex=PREPROCESS_GEX, mask_segments=True, mask_segments_tp=mask_segments_tp,mask_segments_mode=inverse_mask_segments_mode)
