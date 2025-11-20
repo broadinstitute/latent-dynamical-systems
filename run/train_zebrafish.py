@@ -245,9 +245,9 @@ def evaluate_model(mixer,pde,T0,its, VALIDATION_TIMEPOINTS, VAL_TIME_OFFSETS, re
 
 num_steps = set_num_steps(CHOSEN_TIMEPOINTS, args)
 
-print("tp")
-for k, v in tp.items():
-    print(k)
+# print("tp")
+# for k, v in tp.items():
+#     print(k)
 
 if LEARN_BASELINE_FACTORS:
     print("Running NMF to learn baseline factors") 

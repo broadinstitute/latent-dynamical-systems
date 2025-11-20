@@ -18,15 +18,15 @@ tqdm>=4.62.0
 # Machine learning utils
 scikit-learn>=0.24.0
 
+# Experiment tracking
+wandb>=0.12.0
+
 # Model interpretability (optional)
 captum>=0.5.0
 
 # Gene set analysis (optional)
 gseapy>=0.10.0
 
-# Experiment tracking (optional)
-# wandb>=0.12.0
-
-# Image processing
-# scipy.ndimage is included in scipy
-
+# jupyter kernel
+ipykernel>=6.23.0
+jupyter>=1.0.0

@@ -5,7 +5,7 @@ A computational framework for learning spatiotemporal dynamics from time-series 
 ## Key Features
 
 - **Latent PDE**: Fits reaction-diffusion PDE in a learned latent space to capture spatiotemporal dynamics
-- **Decoder**: Learns decoder mapping latent variables to gene expression
+- **Decoder**: Learns decoder mapping latent variables to gene expression. The attributions of latents to genes from the decoder can be interpreted as the learned gene programs. 
 - **Spatial Registration**: Registers latent trajectory to each sample via a learnable affine transformation
 
 ## Installation
@@ -33,9 +33,22 @@ pip install -r requirements.txt
 
 ## Quick Start
 
-Preprocessed data for the mouse dataset can be downloaded from: https://storage.googleapis.com/lds_recomb_data/Mouse_embryo_all_stage.h5ad. Additional metadata files for running LDS on the mouse dataset are also available: https://storage.googleapis.com/lds_recomb_data/hg38_mm10_1k_features.pkl, https://storage.googleapis.com/lds_recomb_data/mm10.ncbiRefSeq.gtf. Preprocesed data for the zebrafish dataset can be downloaded from https://storage.googleapis.com/lds_recomb_data/zebrafish_spatial_fivetime_slice_stereoseq.h5ad. Additional information on these datasets is available from the corresponding original publications for mouse [Chen et al. Spatiotemporal transcriptomic atlas of mouse organogenesis using DNA nanoball-patterned arrays. (2022)] and zebrafish [Liu et al. Spatiotemporal mapping of gene expression landscapes and developmental trajectories during zebrafish embryogenesis. (2022)].
+### Data Download
 
-The scripts expect the data to be downloaded to the root directory of the repository. 
+Download the preprocessed datasets and place them in the root directory of the repository. Note that the zebrafish dataset is 200 MB while the mouse dataset is 23 GB. 
+
+**Zebrafish Dataset:**
+- Main data: [`zebrafish_spatial_fivetime_slice_stereoseq.h5ad`](https://storage.googleapis.com/lds_recomb_data/zebrafish_spatial_fivetime_slice_stereoseq.h5ad)
+
+**Mouse Dataset:**
+- Main data: [`Mouse_embryo_all_stage.h5ad`](https://storage.googleapis.com/lds_recomb_data/Mouse_embryo_all_stage.h5ad)
+- Metadata files:
+  - [`hg38_mm10_1k_features.pkl`](https://storage.googleapis.com/lds_recomb_data/hg38_mm10_1k_features.pkl)
+  - [`mm10.ncbiRefSeq.gtf`](https://storage.googleapis.com/lds_recomb_data/mm10.ncbiRefSeq.gtf)
+
+**References:**
+- Mouse: Chen et al. *Spatiotemporal transcriptomic atlas of mouse organogenesis using DNA nanoball-patterned arrays.* Cell (2022)
+- Zebrafish: Liu et al. *Spatiotemporal mapping of gene expression landscapes and developmental trajectories during zebrafish embryogenesis.* Science (2022) 
 
 ### Training a Model
 
@@ -51,7 +64,8 @@ python run/train_zebrafish.py \
     --latent_dim 20 \
     --max_its 10000 \
     --pde ReactionDiffusion \
-    --mix mlp
+    --mix mlp \
+    --chosen_tps "1,2,3,4"
 ```
 
 Train on mouse data:
@@ -59,10 +73,10 @@ Train on mouse data:
 ```bash
 mkdir output
 python run/mouse_train.py \
+    --latent_dim 40 \
     --out_dir ./output \
-    --out_prefix mouse_exp1 \
-    --latent_dim 20 \
-    --max_its 10000
+    --timescale 25 \
+    --mix mlp
 ```
 
 #### Using Jupyter Notebooks
