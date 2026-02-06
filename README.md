@@ -8,7 +8,7 @@ A computational framework for learning spatiotemporal dynamics from time-series 
 - **Decoder**: Learns decoder mapping latent variables to gene expression. The attributions of latents to genes from the decoder can be interpreted as the learned gene programs. 
 - **Spatial Registration**: Registers latent trajectory to each sample via a learnable affine transformation
 
-## Example of a learned latent trajectory on a zebrafish embryogenesis dataset
+## Example of a learned latent trajectory of zebrafish embryogenesis
 
 https://github.com/user-attachments/assets/245e13f0-da6e-4cf0-8218-157e19fc7419
 
