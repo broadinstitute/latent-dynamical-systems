@@ -2,17 +2,15 @@
 
 A computational framework for learning spatiotemporal dynamics from time-series spatial transcriptomics data using latent partial differential equations (PDEs) and spatial registration.
 
-
-
-https://github.com/user-attachments/assets/245e13f0-da6e-4cf0-8218-157e19fc7419
-
-
-
 ## Key Features
 
 - **Latent PDE**: Fits reaction-diffusion PDE in a learned latent space to capture spatiotemporal dynamics
 - **Decoder**: Learns decoder mapping latent variables to gene expression. The attributions of latents to genes from the decoder can be interpreted as the learned gene programs. 
 - **Spatial Registration**: Registers latent trajectory to each sample via a learnable affine transformation
+
+## Example of a learned latent trajectory on a zebrafish embryogenesis dataset
+
+https://github.com/user-attachments/assets/245e13f0-da6e-4cf0-8218-157e19fc7419
 
 ## Installation
 
