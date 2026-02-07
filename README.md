@@ -1,4 +1,4 @@
-# Latent Dynamical Systems (LDS)
+# Dynamical Analysis of Latent Interactions (DALI)
 
 A computational framework for learning spatiotemporal dynamics from time-series spatial transcriptomics data using latent partial differential equations (PDEs) and spatial registration.
 
@@ -8,7 +8,7 @@ A computational framework for learning spatiotemporal dynamics from time-series 
 - **Decoder**: Learns decoder mapping latent variables to gene expression. The attributions of latents to genes from the decoder can be interpreted as the learned gene programs. 
 - **Spatial Registration**: Registers latent trajectory to each sample via a learnable affine transformation
 
-## Example of a learned latent trajectory of zebrafish embryogenesis
+## Learned latent trajectory of zebrafish embryogenesis
 
 https://github.com/user-attachments/assets/245e13f0-da6e-4cf0-8218-157e19fc7419
 
@@ -86,6 +86,6 @@ python run/mouse_train.py \
 #### Using Jupyter Notebooks
 
 For interactive exploration, see:
-- `RECOMB_zebrafish_train.ipynb`: Minimal notebook demonstrating training a LDS model on the zebrafish dataset
-- `RECOMB_mouse_train.ipynb`: Notebook for mouse embryogenesis data
+- `example_zebrafish_train.ipynb`: Minimal notebook demonstrating training a DALI model on the zebrafish dataset
+- `example_mouse_train.ipynb`: Notebook for mouse embryogenesis data
 
